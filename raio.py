@@ -6,7 +6,7 @@ import ssl
 import os
 import mimetypes
 import configparser
-import cv2
+import subprocess
 
 class Raio:
 
@@ -134,16 +134,11 @@ class Raio:
         # Path to your image
         image_path = imguri
 
-        image = cv2.imread(image_path)
+        # Construct the command
+        command = ["sudo", "fbi", "-T", "1", "-a", "-t", "3", image_path]
 
-        # Show image in fullscreen
-        cv2.namedWindow("Image", cv2.WND_PROP_FULLSCREEN)
-        cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-        cv2.imshow("Image", image)
-
-        # Wait for 3 seconds and close
-        cv2.waitKey(3000)
-        cv2.destroyAllWindows()
+        # Run the command
+        subprocess.run(command)
 
     def start(self, wait=30):
         # Continuous listening loop
