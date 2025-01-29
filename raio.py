@@ -6,6 +6,8 @@ import ssl
 import os
 import mimetypes
 import configparser
+from tkinter import Tk, Label
+from PIL import Image, ImageTk
 
 class Raio:
 
@@ -60,7 +62,8 @@ class Raio:
             imap_server.select('INBOX')
 
             # Search for unseen emails
-            status, messages = imap_server.search(None, 'UNSEEN')
+            #status, messages = imap_server.search(None, 'UNSEEN')
+            status, messages = imap_server.search(None, 'ALL')
 
             for mail_id in messages[0].split():
                 status, uid_data = imap_server.fetch(mail_id, 'UID')
@@ -124,8 +127,29 @@ class Raio:
             if a["mimetype"] and a["mimetype"].startswith("image/"):
                 # It's an image
                 print(f"Got image {a['filename']}")
+                self.showimage_onscreen(a["filepath"])
             else:
                 print(f"Got attachment {a['filename']} of type {a['mimetype']}")
+
+    def showimage_onscreen(self,imguri):
+        # Path to your image
+        image_path = imguri
+
+        # Create the main application window
+        root = Tk()
+        root.attributes('-fullscreen', True)  # Fullscreen mode
+
+        # Load and display the image
+        image = Image.open(image_path)
+        photo = ImageTk.PhotoImage(image)
+
+        label = Label(root, image=photo)
+        label.pack(expand=True)
+
+        # Close the window after 3 seconds
+        root.after(3000, root.destroy)
+
+        root.mainloop()
 
     def start(self, wait=30):
         # Continuous listening loop
