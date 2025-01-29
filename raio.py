@@ -6,8 +6,7 @@ import ssl
 import os
 import mimetypes
 import configparser
-from tkinter import Tk, Label
-from PIL import Image, ImageTk
+import cv2
 
 class Raio:
 
@@ -135,21 +134,16 @@ class Raio:
         # Path to your image
         image_path = imguri
 
-        # Create the main application window
-        root = Tk()
-        root.attributes('-fullscreen', True)  # Fullscreen mode
+        image = cv2.imread(image_path)
 
-        # Load and display the image
-        image = Image.open(image_path)
-        photo = ImageTk.PhotoImage(image)
+        # Show image in fullscreen
+        cv2.namedWindow("Image", cv2.WND_PROP_FULLSCREEN)
+        cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.imshow("Image", image)
 
-        label = Label(root, image=photo)
-        label.pack(expand=True)
-
-        # Close the window after 3 seconds
-        root.after(3000, root.destroy)
-
-        root.mainloop()
+        # Wait for 3 seconds and close
+        cv2.waitKey(3000)
+        cv2.destroyAllWindows()
 
     def start(self, wait=30):
         # Continuous listening loop
