@@ -125,17 +125,19 @@ class Raio:
         for a in attachments:
             if a["mimetype"] and a["mimetype"].startswith("image/"):
                 # It's an image
+                seconds= 1
                 print(f"Got image {a['filename']}")
-                self.showimage_onscreen(a["filepath"])
+                self.showimage_onscreen(a["filepath"],seconds)
+                time.sleep(seconds)
             else:
                 print(f"Got attachment {a['filename']} of type {a['mimetype']}")
 
-    def showimage_onscreen(self,imguri):
+    def showimage_onscreen(self,imguri,seconds):
         # Path to your image
         image_path = imguri
-
+    
         # Construct the command
-        command = ["sudo", "fbi", "-T", "1", "-a", "-t", "3", image_path]
+        command = ["sudo", "fbi", "-T", "1", "-a", "-t", str(seconds), image_path]
 
         # Run the command
         subprocess.run(command)
