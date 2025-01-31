@@ -61,8 +61,8 @@ class Raio:
             imap_server.select('INBOX')
 
             # Search for unseen emails
-            #status, messages = imap_server.search(None, 'UNSEEN')
-            status, messages = imap_server.search(None, 'ALL')
+            status, messages = imap_server.search(None, 'UNSEEN')
+            #status, messages = imap_server.search(None, 'ALL')
 
             for mail_id in messages[0].split():
                 status, uid_data = imap_server.fetch(mail_id, 'UID')
@@ -137,7 +137,7 @@ class Raio:
         image_path = imguri
     
         # Construct the command
-        command = ["sudo", "fbi", "-T", "1", "-a", "-t", str(seconds), image_path]
+        command = ["sudo", "fim", "-T", "1", "-a", "-t", str(seconds), image_path]
 
         # Run the command
         subprocess.run(command)
