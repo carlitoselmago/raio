@@ -7,6 +7,8 @@ import os
 import mimetypes
 import configparser
 import subprocess
+from ascii_magic import AsciiArt
+
 
 class Raio:
 
@@ -61,8 +63,8 @@ class Raio:
             imap_server.select('INBOX')
 
             # Search for unseen emails
-            status, messages = imap_server.search(None, 'UNSEEN')
-            #status, messages = imap_server.search(None, 'ALL')
+            #status, messages = imap_server.search(None, 'UNSEEN')
+            status, messages = imap_server.search(None, 'ALL')
 
             for mail_id in messages[0].split():
                 status, uid_data = imap_server.fetch(mail_id, 'UID')
@@ -127,17 +129,30 @@ class Raio:
                 # It's an image
                 seconds=1
                 print(f"Got image {a['filename']}")
-                self.showimage_onscreen(a["filepath"],seconds)
-                
+                #self.showimage_onscreen(a["filepath"],seconds)
+                asciiimag = self.convertimage_toascii(a["filepath"],columns=40)
+
+                # Print into an actual printer
+                self.sendtoprint(asciiimag)  
+
+                # STOP, JUST TESTING!!!
+                sys.exit()
             else:
                 print(f"Got attachment {a['filename']} of type {a['mimetype']}")
             time.sleep(seconds)
+
+    def convertimage_toascii(self,imguri,columns=200):
+        my_art = AsciiArt.from_image(imguri)
+        my_output = my_art.to_ascii(columns=columns, monochrome=True)
+        print(my_output)
+        return my_output
+    
     def showimage_onscreen(self,imguri,seconds=1):
         # Path to your image
         image_path = imguri
     
         # Construct the command
-        command = ["sudo", "fim", "-T", "1", "-a", "-t", str(seconds), image_path]
+        command = ["sudo", "fbi", "-T", "1", "-a", "-t", str(seconds), image_path]
 
         # Run the command
         subprocess.run(command)
@@ -150,6 +165,13 @@ class Raio:
             time.sleep(wait)  # in seconds
             print(":::::::::::::: CHECK INBOX ::::::::::::::::")
 
+
+    def sendtoprint(self,data):
+        # Prints it into an actual printer, only works for linux
+        lpr =  subprocess.Popen("/usr/bin/lpr", stdin=subprocess.PIPE)
+        lpr.stdin.write(data.encode('utf-8'))
+        lpr.stdin.close()
+        lpr.wait()
 
 if __name__ == "__main__":
     raio = Raio()
